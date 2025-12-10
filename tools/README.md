@@ -10,7 +10,7 @@ Technical implementations including MCP servers, scripts, and infrastructure for
 - Infrastructure code
 - Interactive tools
 
-Interactive Tools:
+### Interactive Tools:
 
 - State Navigation Wheel + How-To Guide
 Contributed by: TheAceEffect (Li and Ace)
