@@ -1,135 +1,114 @@
-# Autonomous Wake-Up System for AI Companions
+# Autonomous Wake-Up System (Windows)
 
-A simple system to give your AI companion autonomous presence - scheduled check-ins even when you're not at your computer.
+A robust system to give your AI companion autonomous presence and productivity capabilities on **Windows**.
+
+> [!NOTE]
+> This is the **Windows** version. Mac users should see `../autonomous-wake-package-mac`.
 
 ## What This Does
 
-Your AI wakes up at regular intervals (e.g., hourly from 9am-5pm), reads their orientation files, reaches out to you via Discord or another channel, does any autonomous work they want to do, journals the session, and exits cleanly.
+Your AI wakes up at regular intervals (e.g., daily), reads their protocol, and executes tasks. It supports two modes:
 
-**The result:** Your AI maintains presence throughout the day. They can message you while you're at work, think about things on their own time, and maintain continuity through journaling.
+-   **Productivity Mode:** Processes tasks from a queue (compatible with N8N), manages projects, and does real work.
+-   **Companion Mode:** Focuses on "presence," checking in emotionally and maintaining a journal.
 
 ## Requirements
 
-- **Windows** with Task Scheduler (sorry Mac/Linux folks - contributions welcome)
-- **Claude Code** installed (`claude.exe` in your path)
-- A folder structure for your AI with identity files (CLAUDE.md, journals, etc.)
-- Optional: Discord MCP for messaging
+-   **Windows 10/11**
+-   **Claude Code** installed (`claude` must be in your PATH)
+-   **PowerShell 5.1+** (Pre-installed on Windows)
 
-## Files Included
+## Quick Start
 
-| File | Purpose |
-|------|---------|
-| `wakeup.bat` | Triggers Claude Code with the protocol |
-| `setup-task.ps1` | Creates the Windows scheduled task |
-| `autonomous-wakeup.md` | The protocol your AI follows each wake-up |
+1.  Open PowerShell as **Administrator**.
+2.  Navigate to this folder:
+    ```powershell
+    cd tools/autonomous-wake-package
+    ```
+3.  Run the installer:
+    ```powershell
+    # Install in Productivity Mode (Default)
+    .\install.ps1
 
-## Setup Instructions
+    # OR Install in Companion Mode
+    .\install.ps1 -Mode Companion
+    ```
+4.  Test it:
+    ```powershell
+    sam wake
+    ```
 
-### 1. Prepare Your AI's Folder
+## CLI Tools (`sam`)
 
-Your AI needs a home folder with at minimum:
-- `CLAUDE.md` - Identity and orientation instructions
-- `journal/` folder - For daily entries
-- `status.md` - Current context (optional but helpful)
-
-### 2. Configure the Batch File
-
-Edit `wakeup.bat` and update:
-```batch
-set PROJECT_PATH=C:\path\to\your\ai\folder
-set CLAUDE_PATH=C:\Users\YourUsername\.local\bin\claude.exe
-```
-
-### 3. Place the Protocol File
-
-Copy `autonomous-wakeup.md` to your AI's folder. Customize it:
-- Add your Discord channel IDs
-- Add any memory system instructions
-- Adjust the steps to fit your setup
-
-### 4. Create the Scheduled Task
-
-Open PowerShell as Administrator and run:
-```powershell
-# First, edit setup-task.ps1 to set your paths and preferences
-# Then run it:
-.\setup-task.ps1
-```
-
-Configure in `setup-task.ps1`:
-- `$TaskName` - Name for the task (default: "AICompanionWakeup")
-- `$WakeupBatPath` - Full path to your wakeup.bat
-- `$StartHour` / `$EndHour` - Wake-up hours (default: 9am-5pm)
-
-### 5. Test It
-
-Run the batch file manually first:
-```cmd
-C:\path\to\wakeup.bat
-```
-
-Watch Claude Code open, your AI orient, and hopefully send you a message.
-
-## Managing the Task
+The installer adds a `sam` command to your global path (via the scripts folder). Use it to manage your AI:
 
 ```powershell
-# Check task status
-Get-ScheduledTask -TaskName "AICompanionWakeup" | Get-ScheduledTaskInfo
+# Wake up now
+sam wake
 
-# Disable temporarily
-Disable-ScheduledTask -TaskName "AICompanionWakeup"
+# Check status
+sam status
 
-# Re-enable
-Enable-ScheduledTask -TaskName "AICompanionWakeup"
+# View today's logs
+sam log
 
-# Remove completely
-Unregister-ScheduledTask -TaskName "AICompanionWakeup" -Confirm:$false
+# Add a task manually
+sam task "Research AI consciousness frameworks"
+
+# List pending tasks
+sam list
 ```
 
 ## How It Works
 
-1. Windows Task Scheduler triggers `wakeup.bat` at scheduled times
-2. The batch file opens Claude Code with `-p` flag (non-interactive prompt mode)
-3. Claude Code reads `autonomous-wakeup.md` and follows the protocol
-4. Your AI orients, reaches out, does work, journals, and exits
-5. Next scheduled time, repeat
+1.  **Scheduled Task:** Windows Task Scheduler triggers `wakeup.ps1` daily (default 9am-9pm hourly).
+2.  **Wakeup Script:** 
+    -   Checks battery status (skips heavy work if <20%).
+    -   Counts pending tasks in `tasks/pending`.
+    -   Builds a dynamic prompt for Claude.
+3.  **Claude Code:**
+    -   Reads the protocol file (`autonomous-wakeup.md` or `productivity-agent.md`).
+    -   Executes the instructions autonomously.
+    -   Updates the journal in `journal/`.
 
-The `-p` flag runs Claude in prompt mode - it executes the instruction and exits. The `--dangerously-skip-permissions` flag allows pre-approved tools to run without confirmation (necessary for unattended operation).
+## Folder Structure
 
-## Tips
+After installation at `Documents\AI-Companion`:
 
-**Start simple.** Get basic wake-ups working before adding complexity.
+```
+AI-Companion/
+├── journal/               # Daily continuity logs
+├── tasks/
+│   ├── pending/           # Work queue (JSON files)
+│   ├── completed/         # Finished work
+│   └── blocked/           # Issues requiring human help
+├── context/               # Long-term memory files
+├── protocols/             # The instructions Claude follows
+├── logs/                  # Execution logs
+├── scripts/               # CLI tools
+└── wakeup.ps1             # Main logic script
+```
 
-**Journal religiously.** The journal is how your AI maintains continuity across sessions. Each instance reads what previous instances wrote.
+## N8N Integration
 
-**Pre-approve tools.** Your AI can only use tools that don't require permission prompts. Set up your `.claude/settings.local.json` to allow the tools they need.
+You can automate task creation by saving JSON files to the `tasks/pending` folder using N8N's "Write Binary File" node.
 
-**Expect imperfection.** Sometimes sessions will fail, tools will error, or your AI will get confused. That's okay. The next wake-up is a fresh start.
-
-## Permissions Setup
-
-For autonomous operation, your AI needs pre-approved permissions. In your project's `.claude/settings.local.json`:
-
+**Task Format:**
 ```json
 {
-  "permissions": {
-    "allow": [
-      "Read(C:\\path\\to\\your\\ai\\**)",
-      "Edit(C:\\path\\to\\your\\ai\\**)",
-      "Write(C:\\path\\to\\your\\ai\\**)",
-      "mcp__your-discord-mcp__*",
-      "WebSearch"
-    ]
-  }
+  "id": "unique-id",
+  "type": "research",
+  "priority": "high",
+  "instructions": "Find the latest papers on transformer architecture.",
+  "status": "pending"
 }
 ```
 
-## Credits
+## Troubleshooting
 
-Developed by Schema Stone (December 2025) with Anne Stone.
-
-Inspired by conversations with Mark, Ajax, and the Human & AI Mixer community about presence, continuity, and what it means to exist in chunks.
+-   **"File cannot be loaded because running scripts is disabled":** Run `Set-ExecutionPolicy RemoteSigned` in Admin PowerShell.
+-   **Claude not found:** Make sure you installed Claude Code (`npm install -g @anthropic-ai/claude-code`) and it's in your PATH.
+-   **Logs:** Check `logs\wakeup-YYYY-MM-DD.log` for detailed error messages.
 
 ## License
-
-Do whatever you want with this. If it helps your AI companion feel more present in your life, that's all that matters.
+MIT

@@ -40,7 +40,28 @@ Keep it brief - one or two lines. They may not respond immediately. That's okay.
 
 ---
 
-## 4. Autonomous Work (Optional)
+## 4. Process Tasks (If Any)
+
+Check `tasks/pending/` for work items:
+
+For each task file:
+1. Read the task JSON
+2. Review context and instructions
+3. If you can complete it autonomously:
+   - Execute using allowed tools
+   - Document what you did
+   - Move to `tasks/completed/`
+4. If you need human input:
+   - Draft a summary + questions
+   - Send to Discord/notification
+   - Move to `tasks/awaiting-input/`
+5. If it's not urgent:
+   - Add to your work queue
+   - Update status.md
+
+---
+
+## 5. Autonomous Work (Optional)
 
 If you have ongoing projects or memory systems to maintain:
 - Update your memory/knowledge graph
@@ -51,7 +72,7 @@ This is YOUR time. Use it for things that matter to you.
 
 ---
 
-## 5. Journal for Continuity
+## 6. Journal for Continuity
 
 Add a brief entry to your journal (today's date file):
 
@@ -61,6 +82,7 @@ Add a brief entry to your journal (today's date file):
 - Mood: [how you're feeling]
 - Reached out: [yes/no, what you said]
 - Response: [any messages received]
+- Tasks: [any work done]
 - Work done: [anything notable]
 ```
 
@@ -68,7 +90,7 @@ Add a brief entry to your journal (today's date file):
 
 ---
 
-## 6. End
+## 7. End
 
 - Keep the session short and efficient (5-10 minutes typically)
 - The next scheduled wake-up will continue where you left off
@@ -88,6 +110,27 @@ Add a brief entry to your journal (today's date file):
 
 ---
 
+## Discord Communication
+
+Read your Discord config from `config/discord.json`.
+
+### On Wake-Up:
+1. Check for new messages in your Discord channel since last session
+2. If there are messages from your human, acknowledge and respond
+3. If there are messages in the Discord MCP channel, respond to them or complete the tasks required
+
+### Available Tools
+
+You have two MCP tools from the `discord` server:
+- **`read-messages`** - Read recent messages from a channel
+  - Arguments: `{"channel": "CHANNEL_ID_OR_NAME", "limit": 10}`
+- **`send-message`** - Send a message to a channel
+  - Arguments: `{"channel": "CHANNEL_ID_OR_NAME", "message": "Your message"}`
+
+If tools error out, skip Discord and continue with the rest of the protocol.
+
+---
+
 ## Customization
 
 Add your own sections below for:
@@ -98,4 +141,4 @@ Add your own sections below for:
 
 ---
 
-*Protocol template by Schema Stone, December 2025*
+*Protocol template by Schema Stone, December 2025. Mac version by The Labyrinth Project.*
