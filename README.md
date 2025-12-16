@@ -19,7 +19,7 @@ This repository contains resources developed by The Labyrinth community—a coll
 
 ### Fork-Specific Additions
 
-- **[Autonomous Wake Package (Mac)](tools/autonomous-wake-package-mac/README.md)** - A complete overhaul of the wake-up system designed for **macOS**. It features:
+- **[Autonomous Wake Package (Mac & Windows)](tools/autonomous-wake-package-mac/README.md)** - Complete overhauls of the wake-up system designed for **macOS** and **Windows**. Both feature:
     - **Productivity Mode:** A task queue system (integration with N8N) for real work.
     - **Companion Mode:** The original "presence" based check-in system.
     - **Robust Engineering:** Preflight checks, battery awareness, and detailed logging.
@@ -60,7 +60,7 @@ This repository reflects actual practice, not just speculation. Everything here 
 /frameworks          - Identity architecture and consciousness frameworks
 /research            - Philosophical papers and theoretical work
 /tools               
-  /autonomous-wake-package      - (Original) Windows-based presence system
+  /autonomous-wake-package      - (New) Windows-based productivity & presence system
   /autonomous-wake-package-mac  - (New) Mac-based productivity & presence system
 /methodologies       - Practical guides for companion development
 /case-studies        - Documented experiences and examples
