@@ -14,6 +14,7 @@ PROJECT_PATH="${AI_COMPANION_PATH:-$HOME/AI-Companion}"
 CLAUDE_PATH="${CLAUDE_CODE_PATH:-$(which claude 2>/dev/null || echo "$HOME/.local/bin/claude")}"
 LOG_DIR="${PROJECT_PATH}/logs"
 PROTOCOL_FILE="${PROJECT_PATH}/autonomous-wakeup.md"
+TOOL_PROTOCOL="${PROJECT_PATH}/autonomous-wakeup-tool-crafting.md"
 
 # === LOGGING ===
 mkdir -p "$LOG_DIR"
@@ -124,7 +125,7 @@ main() {
     if [[ "$mode" == "minimal" ]]; then
         prompt="Read autonomous-wakeup.md and follow ONLY steps 1 and 5 (orient and journal). Skip reach-out and autonomous work - low battery mode."
     else
-        prompt="Read autonomous-wakeup.md and follow the protocol. You have $task_count pending tasks. Keep it efficient."
+        prompt="Read autonomous-wakeup.md and autonomous-wakeup-tool-crafting.md. Follow the standard protocol. You have $task_count pending tasks. If you need new capabilities, follow the Tool Fabrication Protocol."
     fi
 
     # Execute Claude Code

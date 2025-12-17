@@ -1,0 +1,7 @@
+{
+  "name": "test-crypto-fetcher",
+  "purpose": "Fetch BTC price for the daily journal.",
+  "implementation_plan": "Python script using requests to query coinmarketcap.",
+  "access_required": ["WebSearch"],
+  "security_measures": "Read-only web access."
+}

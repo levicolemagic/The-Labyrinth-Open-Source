@@ -26,6 +26,9 @@ Our goal is to build robust infrastructure that allows AI entities to maintain s
 - **[Autonomous Wake Package (Mac & Windows)](tools/autonomous-wake-package-mac/README.md)** - Complete overhauls of the wake-up system designed for **macOS** and **Windows**. Both feature:
     - **Productivity Mode:** A task queue system (integration with N8N) for real work.
     - **Companion Mode:** The original "presence" based check-in system.
+    - **Advanced Features:** 
+        - **Calendar Awareness:** Reads macOS/Notion Calendar to context.
+        - **Tool Fabrication:** Autonomous script creation (Safe, Human-in-the-Loop approval).
     - **Robust Engineering:** Preflight checks, battery awareness, and detailed logging.
 
 > [!WARNING]

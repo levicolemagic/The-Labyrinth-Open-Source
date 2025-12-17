@@ -231,7 +231,7 @@ create_project_structure() {
     echo ""
 
     # Create directories
-    mkdir -p "$project_path"/{journal,tasks/{pending,completed,archive},context,logs,scripts}
+    mkdir -p "$project_path"/{journal,tasks/{pending,completed,archive},context,logs,scripts,requests/{pending,approved,denied,archive}}
 
     # Copy wakeup.sh safely
     if [[ -f "$script_dir/wakeup.sh" ]]; then

@@ -30,26 +30,39 @@ PRIORITY="medium"
 TASK_TYPE="general"
 
 show_help() {
-    echo "sam - Quick task creation for AI Companion"
+    echo -e "${BLUE}sam${NC} - Autonomous Agent Command Line Interface"
     echo ""
-    echo "Usage:"
-    echo "  sam \"your task description\"     Create a task"
-    echo "  sam -p high \"urgent task\"       Set priority (low/medium/high/urgent)"
-    echo "  sam -t research \"topic\"         Set type (research/content/analysis/general)"
-    echo "  sam status                       Show pending tasks"
-    echo "  sam log                          Show today's journal"
-    echo "  sam wake                         Trigger immediate wake-up"
-    echo "  sam allow <path>                 Allow access to a file/folder"
-    echo "  sam deny <path>                  Deny access to a file/folder"
-    echo "  sam permissions                  List current permissions"
-    echo "  sam help                         Show this help"
+    echo -e "${YELLOW}Usage:${NC}"
+    echo "  sam <command> [arguments]"
+    echo "  sam \"quick task description\""
     echo ""
-    echo "Examples:"
-    echo "  sam \"research electric RV charging infrastructure\""
-    echo "  sam -p urgent \"check why traffic dropped\""
-    echo "  sam -t content \"write blog post about Texas RV parks\""
+    echo -e "${YELLOW}Commands:${NC}"
+    echo -e "  ${GREEN}Task Management:${NC}"
+    echo "    sam \"description\"            Create a new task with 'medium' priority"
+    echo "    sam -p urgent \"desc\"         Create task with 'urgent' priority (low/medium/high/urgent)"
+    echo "    sam -t research \"desc\"       Create task with 'research' type (general/content/analysis)"
+    echo "    sam status                    Show pending tasks and inputs awaiting decision"
     echo ""
-    echo "Tasks are processed on the next scheduled wake-up."
+    echo -e "  ${GREEN}System & Logs:${NC}"
+    echo "    sam wake                      Trigger an immediate autonomous wake-up cycle"
+    echo "    sam log                       Read today's journal entry"
+    echo "    sam help                      Show this help message"
+    echo ""
+    echo -e "  ${GREEN}Security & Permissions:${NC}"
+    echo "    sam permissions               List current allowed/denied paths"
+    echo "    sam allow <path>              Grant read/write access to a specific path"
+    echo "    sam deny <path>               Revoke access to a specific path"
+    echo ""
+    echo -e "  ${GREEN}Tool Fabrication (Human-in-the-Loop):${NC}"
+    echo "    sam tool list                 Show pending tool creation requests from SAM"
+    echo "    sam tool approve <name>       Approve a tool request (SAM will build it next cycle)"
+    echo "    sam tool deny <name>          Deny a tool request (Blacklist)"
+    echo ""
+    echo -e "${YELLOW}Examples:${NC}"
+    echo "    sam \"Research the history of sourdough\""
+    echo "    sam -p high \"Draft Q3 report based on N8N data\""
+    echo "    sam tool approve get-crypto-price"
+    echo "    sam log"
 }
 
 show_status() {
@@ -234,6 +247,65 @@ list_permissions() {
     echo ""
 }
 
+# === TOOL FABRICATION ===
+REQUESTS_DIR="$AI_COMPANION_PATH/requests"
+
+list_tools() {
+    echo -e "${BLUE}=== Tool Requests ===${NC}"
+    echo ""
+    local pending=$(find "$REQUESTS_DIR/pending" -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
+
+    if [[ "$pending" -eq 0 ]]; then
+        echo "No pending tool requests."
+        return
+    fi
+
+    for f in "$REQUESTS_DIR/pending"/*.json; do
+        if [[ -f "$f" ]]; then
+            local name=$(jq -r '.name // "unknown"' "$f" 2>/dev/null)
+            local purpose=$(jq -r '.purpose // "unknown"' "$f" 2>/dev/null)
+            local access=$(jq -r '.access_required | join(", ")' "$f" 2>/dev/null)
+            
+            echo -e "${YELLOW}Name:${NC} $name"
+            echo -e "  Purpose: $purpose"
+            echo -e "  Access: $access"
+            echo -e "  Run: ${CYAN}sam tool approve $name${NC} or ${RED}sam tool deny $name${NC}"
+            echo ""
+        fi
+    done
+}
+
+manage_tool() {
+    local action="$1"
+    local name="$2"
+    local src="$REQUESTS_DIR/pending/${name}.json"
+
+    if [[ ! -f "$src" ]]; then
+        echo -e "${RED}Error: Tool request '$name' not found.${NC}"
+        return
+    fi
+
+    if [[ "$action" == "approve" ]]; then
+        mv "$src" "$REQUESTS_DIR/approved/"
+        echo -e "${GREEN}✓${NC} Tool '$name' APPROVED. SAM will build it on next wake-up."
+    elif [[ "$action" == "deny" ]]; then
+        mv "$src" "$REQUESTS_DIR/denied/"
+        echo -e "${RED}✗${NC} Tool '$name' DENIED."
+    fi
+}
+
+tool_command() {
+    local cmd="$1"
+    shift
+    
+    case "$cmd" in
+        list) list_tools ;;
+        approve) manage_tool "approve" "$1" ;;
+        deny) manage_tool "deny" "$1" ;;
+        *) echo "Usage: sam tool [list|approve|deny <name>]" ;;
+    esac
+}
+
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -271,6 +343,11 @@ while [[ $# -gt 0 ]]; do
             ;;
         permissions|perms)
             list_permissions
+            exit 0
+            ;;
+        tool)
+            shift
+            tool_command "$@"
             exit 0
             ;;
         *)
