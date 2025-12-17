@@ -5,27 +5,38 @@ on run argv
 	set now to current date
 	set startDate to now
 	set time of startDate to 0
-	
-	-- Calculate End Date (Tomorrow 23:59:59)
 	set endDate to startDate + (2 * days) - 1
 
 	tell application "Calendar"
 		if (count of argv) is 0 then
-			-- Fallback default if no args provided
 			set targetNames to {"Work", "Home"}
 		else
 			set targetNames to argv
 		end if
 		
-		-- Iterate ALL calendars to avoid name resolution bugs
-		set allCalendars to calendars
-		repeat with aCal in allCalendars
-			set calName to name of aCal
-			-- Check if this calendar is in our requested list
-			if calName is in targetNames then
+		-- 1. Batch Fetch All Names (Safe operation)
+		-- This avoids iterating through broken calendar objects directly
+		set allNames to name of calendars
+		
+		-- 2. Process each requested calendar
+		repeat with reqName in targetNames
+			set foundIndex to 0
+			
+			-- Find index in the safe name list
+			repeat with i from 1 to count of allNames
+				if item i of allNames is (reqName as string) then
+					set foundIndex to i
+					exit repeat
+				end if
+			end repeat
+			
+			-- 3. Access by Index if found
+			if foundIndex > 0 then
 				try
-					-- Fetch events in date range
-					set eventList to (every event of aCal whose start date is greater than or equal to startDate and start date is less than or equal to endDate)
+					set targetCal to calendar foundIndex
+					
+					-- Fetch events (Safe since we have a valid reference)
+					set eventList to (every event of targetCal whose start date is greater than or equal to startDate and start date is less than or equal to endDate)
 					
 					repeat with anEvent in eventList
 						set evtSummary to summary of anEvent
@@ -34,30 +45,26 @@ on run argv
 						
 						set startStr to time string of evtStart
 						set endStr to time string of evtEnd
-						
-						-- Format Date (e.g., "Monday, ")
 						set dateStr to date string of evtStart
 						
 						set output to output & "[" & dateStr & " " & startStr & " - " & endStr & "] " & evtSummary & return
 						set eventCount to eventCount + 1
 					end repeat
 				on error
-					-- Ignore errors from specific calendars
+					-- Ignore transient errors on specific calendars
 				end try
 			end if
 		end repeat
 	end tell
 
 	if eventCount is 0 then
-		-- Create comma-separated string of checked calendars
 		set checkedList to ""
 		repeat with n in targetNames
 			set checkedList to checkedList & n & ", "
 		end repeat
 		if length of checkedList > 2 then
-			set checkedList to text 1 thru -3 of checkedList -- remove trailing comma
+			set checkedList to text 1 thru -3 of checkedList
 		end if
-		
 		return "No events found (Checked: " & checkedList & ")."
 	else
 		return output
