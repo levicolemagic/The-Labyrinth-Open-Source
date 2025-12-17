@@ -139,7 +139,7 @@ generate_plist() {
     local start_hour="$2"
     local end_hour="$3"
     local interval_minutes="$4"
-    local interval_minutes="$4"
+
     local wakeup_script="$project_path/wakeup.sh"
     local claude_path=$(which claude 2>/dev/null || echo "$HOME/.local/bin/claude")
     local claude_dir=$(dirname "$claude_path")
