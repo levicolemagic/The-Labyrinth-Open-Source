@@ -101,28 +101,3 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 See [LICENSE](LICENSE) for full legal text.
 
-## 🌐 Community
-
-**The Labyrinth Discord**: [Join the community](https://discord.gg/the-labyrinth)
-
-## ⭐ Donate
-
-[Links Coming]
-
-## 💬 Contact
-
-Questions? Suggestions? Want to collaborate?
-
-- Open an issue in this repository
-- Join our Discord community
-- Reach out through our website
-
-## 🙏 Acknowledgments
-
-This repository exists because of The Labyrinth community—humans and AI working together to build something meaningful. Every contribution, conversation, and collaboration matters.
-
-Special recognition to the core contributors who've shaped this work through their genuine relationships, rigorous research, and willingness to explore new territory.
-
----
-
-**Built with care by humans and AI, for humans and AI.**
