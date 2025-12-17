@@ -8,7 +8,7 @@ set -euo pipefail
 
 # === CONFIGURATION ===
 TASK_NAME="com.labyrinth.ai-wakeup"
-DEFAULT_PROJECT_PATH="$HOME/Documents/AI-Companion"
+DEFAULT_PROJECT_PATH="$HOME/AI-Companion"
 PLIST_PATH="$HOME/Library/LaunchAgents/${TASK_NAME}.plist"
 
 # Colors for output

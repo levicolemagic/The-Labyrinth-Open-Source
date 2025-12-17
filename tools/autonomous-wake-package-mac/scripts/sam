@@ -13,7 +13,7 @@
 set -euo pipefail
 
 # Configuration
-AI_COMPANION_PATH="${AI_COMPANION_PATH:-$HOME/Documents/AI-Companion}"
+AI_COMPANION_PATH="${AI_COMPANION_PATH:-$HOME/AI-Companion}"
 TASKS_DIR="$AI_COMPANION_PATH/tasks/pending"
 JOURNAL_DIR="$AI_COMPANION_PATH/journal"
 

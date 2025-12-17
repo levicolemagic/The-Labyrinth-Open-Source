@@ -79,7 +79,7 @@ The installer will guide you through configuration.
 After installation, your AI companion's home folder looks like:
 
 ```
-~/Documents/AI-Companion/
+~/AI-Companion/
 ├── CLAUDE.md              # AI identity and instructions
 ├── autonomous-wakeup.md   # Protocol file
 ├── status.md              # Current context/priorities
@@ -125,10 +125,10 @@ For autonomous operation, your AI needs pre-approved permissions. Edit `.claude/
 {
   "permissions": {
     "allow": [
-      "Read(~/Documents/AI-Companion/**)",
-      "Edit(~/Documents/AI-Companion/**)",
-      "Write(~/Documents/AI-Companion/**)",
-      "Glob(~/Documents/AI-Companion/**)",
+      "Read(~/AI-Companion/**)",
+      "Edit(~/AI-Companion/**)",
+      "Write(~/AI-Companion/**)",
+      "Glob(~/AI-Companion/**)",
       "WebSearch",
       "mcp__your-discord-mcp__*"
     ]
@@ -229,10 +229,10 @@ launchctl unload ~/Library/LaunchAgents/com.labyrinth.ai-wakeup.plist
 launchctl load ~/Library/LaunchAgents/com.labyrinth.ai-wakeup.plist
 
 # Test manually
-~/Documents/AI-Companion/wakeup.sh
+~/AI-Companion/wakeup.sh
 
 # View logs
-tail -f ~/Documents/AI-Companion/logs/wakeup-$(date +%Y-%m-%d).log
+tail -f ~/AI-Companion/logs/wakeup-$(date +%Y-%m-%d).log
 
 # Complete uninstall (preserves data)
 ./uninstall.sh
@@ -250,7 +250,7 @@ tail -f ~/Documents/AI-Companion/logs/wakeup-$(date +%Y-%m-%d).log
 launchctl list | grep ai-wakeup
 
 # Check for errors
-cat ~/Documents/AI-Companion/logs/launchd-stderr.log
+cat ~/AI-Companion/logs/launchd-stderr.log
 
 # Reload the agent
 launchctl unload ~/Library/LaunchAgents/com.labyrinth.ai-wakeup.plist
@@ -261,7 +261,7 @@ launchctl load ~/Library/LaunchAgents/com.labyrinth.ai-wakeup.plist
 
 Make sure scripts are executable:
 ```bash
-chmod +x ~/Documents/AI-Companion/wakeup.sh
+chmod +x ~/AI-Companion/wakeup.sh
 ```
 
 ### Claude Code not found
@@ -279,11 +279,11 @@ ls -la ~/.local/bin/claude
 Check the logs:
 ```bash
 # Main execution log
-cat ~/Documents/AI-Companion/logs/wakeup-$(date +%Y-%m-%d).log
+cat ~/AI-Companion/logs/wakeup-$(date +%Y-%m-%d).log
 
 # launchd output
-cat ~/Documents/AI-Companion/logs/launchd-stdout.log
-cat ~/Documents/AI-Companion/logs/launchd-stderr.log
+cat ~/AI-Companion/logs/launchd-stdout.log
+cat ~/AI-Companion/logs/launchd-stderr.log
 ```
 
 ## Tips

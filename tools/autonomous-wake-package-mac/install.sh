@@ -47,7 +47,7 @@ show_help() {
     echo "What this installs:"
     echo "  - Wake-up script and protocol files"
     echo "  - launchd agent for scheduled execution"
-    echo "  - Project folder structure at ~/Documents/AI-Companion"
+    echo "  - Project folder structure at ~/AI-Companion"
     echo ""
     echo "Requirements:"
     echo "  - macOS 10.14 or later"

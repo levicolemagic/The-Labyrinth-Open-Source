@@ -10,7 +10,7 @@ set -euo pipefail
 
 # === CONFIGURATION ===
 # These can be overridden by environment variables
-PROJECT_PATH="${AI_COMPANION_PATH:-$HOME/Documents/AI-Companion}"
+PROJECT_PATH="${AI_COMPANION_PATH:-$HOME/AI-Companion}"
 CLAUDE_PATH="${CLAUDE_CODE_PATH:-$(which claude 2>/dev/null || echo "$HOME/.local/bin/claude")}"
 LOG_DIR="${PROJECT_PATH}/logs"
 PROTOCOL_FILE="${PROJECT_PATH}/autonomous-wakeup.md"

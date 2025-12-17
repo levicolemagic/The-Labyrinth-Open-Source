@@ -8,7 +8,7 @@ set -euo pipefail
 # Configuration
 TASK_NAME="com.labyrinth.ai-wakeup"
 PLIST_PATH="$HOME/Library/LaunchAgents/${TASK_NAME}.plist"
-DEFAULT_PROJECT_PATH="$HOME/Documents/AI-Companion"
+DEFAULT_PROJECT_PATH="$HOME/AI-Companion"
 
 # Colors
 RED='\033[0;31m'
@@ -56,7 +56,7 @@ main() {
                 echo "                  (journals, tasks, etc.)"
                 echo ""
                 echo "Without --remove-data, only the launchd agent is removed."
-                echo "Your data in ~/Documents/AI-Companion is preserved."
+                echo "Your data in ~/AI-Companion is preserved."
                 exit 0
                 ;;
             *)
