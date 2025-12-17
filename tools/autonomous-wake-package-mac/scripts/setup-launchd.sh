@@ -245,6 +245,13 @@ create_project_structure() {
         chmod +x "$project_path/scripts/sam"
     fi
 
+    # Copy calendar reader safely
+    if [[ -f "$(dirname "$script_dir")/../tools/get-calendar.js" ]]; then
+        safe_copy "$(dirname "$script_dir")/../tools/get-calendar.js" "$project_path/scripts/get-calendar.js" "Calendar Reader"
+    elif [[ -f "$script_dir/../../tools/get-calendar.js" ]]; then
+        safe_copy "$script_dir/../../tools/get-calendar.js" "$project_path/scripts/get-calendar.js" "Calendar Reader"
+    fi
+
     # Copy protocol safely
     local protocols_dir="$(dirname "$script_dir")/protocols"
     if [[ -f "$protocols_dir/autonomous-wakeup.md" ]]; then

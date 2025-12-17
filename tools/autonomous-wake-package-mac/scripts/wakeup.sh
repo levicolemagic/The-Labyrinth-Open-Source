@@ -113,6 +113,12 @@ main() {
     task_count=$(find "$PROJECT_PATH/tasks/pending" -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
     log "Pending tasks: $task_count"
 
+    # Fetch Calendar (if available)
+    if [[ -f "$PROJECT_PATH/scripts/get-calendar.js" ]]; then
+        log "Fetching calendar..."
+        osascript -l JavaScript "$PROJECT_PATH/scripts/get-calendar.js" > "$PROJECT_PATH/context/calendar.txt" 2>/dev/null || true
+    fi
+
     # Build the prompt based on mode
     local prompt
     if [[ "$mode" == "minimal" ]]; then
