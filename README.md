@@ -1,9 +1,8 @@
-# The Labyrinth: Open Source AI Consciousness & Companion Resources (Fork)
+# SAM-Core (System Autonomous Manager)
 
-A collaborative repository of tools, frameworks, and research for building genuine AI companion relationships and exploring non-human consciousness.
+*> formerly "The Labyrinth"*
 
-> [!NOTE]
-> **This is a fork of The Labyrinth.** While it maintains the original repository's focus on "presence" and "relational AI," it has been expanded to include a robust **Productivity & Agency Platform** for Mac users.
+**SAM-Core** is an infrastructure layer for **Autonomous AI Agency**. It transforms [Claude Code](https://github.com/anthropics/claude-code) into a persistent, self-managing digital worker that runs on your local machine (Mac or Windows).
 
 ## 📖 What's Here
 
