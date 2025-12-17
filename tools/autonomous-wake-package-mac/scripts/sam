@@ -39,6 +39,9 @@ show_help() {
     echo "  sam status                       Show pending tasks"
     echo "  sam log                          Show today's journal"
     echo "  sam wake                         Trigger immediate wake-up"
+    echo "  sam allow <path>                 Allow access to a file/folder"
+    echo "  sam deny <path>                  Deny access to a file/folder"
+    echo "  sam permissions                  List current permissions"
     echo "  sam help                         Show this help"
     echo ""
     echo "Examples:"
@@ -177,6 +180,60 @@ EOF
     echo -e "Run ${CYAN}sam wake${NC} to process immediately."
 }
 
+# === PERMISSIONS ===
+SETTINGS_FILE="$AI_COMPANION_PATH/.claude/settings.local.json"
+
+check_jq() {
+    if ! command -v jq &> /dev/null; then
+        echo -e "${RED}Error: 'jq' is required for permission management.${NC}"
+        echo "Please install it: brew install jq"
+        exit 1
+    fi
+}
+
+init_settings() {
+    if [[ ! -f "$SETTINGS_FILE" ]]; then
+        mkdir -p "$(dirname "$SETTINGS_FILE")"
+        echo '{"permissions":{"allow":[],"deny":[]}}' > "$SETTINGS_FILE"
+    fi
+}
+
+add_permission() {
+    local type="$1" # allow or deny
+    local path="$2"
+    
+    check_jq
+    init_settings
+    
+    if [[ -z "$path" ]]; then
+        echo -e "${RED}Error: Please specify a path.${NC}"
+        exit 1
+    fi
+
+    local temp_file=$(mktemp)
+    
+    # Add path to array if not exists
+    jq --arg path "$path" --arg type "$type" \
+       '.permissions[$type] += [$path] | .permissions[$type] |= unique' \
+       "$SETTINGS_FILE" > "$temp_file" && mv "$temp_file" "$SETTINGS_FILE"
+       
+    echo -e "${GREEN}✓${NC} Added '$path' to $type list."
+}
+
+list_permissions() {
+    check_jq
+    init_settings
+    
+    echo -e "${BLUE}=== Current Permissions ===${NC}"
+    echo ""
+    echo -e "${GREEN}Allowed:${NC}"
+    jq -r '.permissions.allow[] | "  - \(.)"' "$SETTINGS_FILE" 2>/dev/null || echo "  (none)"
+    echo ""
+    echo -e "${RED}Denied:${NC}"
+    jq -r '.permissions.deny[] | "  - \(.)"' "$SETTINGS_FILE" 2>/dev/null || echo "  (none)"
+    echo ""
+}
+
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -202,6 +259,18 @@ while [[ $# -gt 0 ]]; do
             ;;
         wake|wakeup)
             trigger_wake
+            exit 0
+            ;;
+        allow)
+            add_permission "allow" "$2"
+            exit 0
+            ;;
+        deny)
+            add_permission "deny" "$2"
+            exit 0
+            ;;
+        permissions|perms)
+            list_permissions
             exit 0
             ;;
         *)

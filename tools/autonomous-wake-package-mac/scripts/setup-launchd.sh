@@ -47,6 +47,55 @@ prompt_with_default() {
     echo "${result:-$default}"
 }
 
+safe_copy() {
+    local src="$1"
+    local dest="$2"
+    local name="$3"
+
+    if [[ -f "$dest" ]]; then
+        # Check if identical
+        if cmp -s "$src" "$dest"; then
+            print_success "$name is up to date"
+            return
+        fi
+
+        # Create backup if different
+        local backup="${dest}.backup-$(date +%s)"
+        cp "$dest" "$backup"
+        cp "$src" "$dest"
+        print_warning "Updated $name (backup created at $backup)"
+    else
+        cp "$src" "$dest"
+        print_success "Installed $name"
+    fi
+}
+
+perform_security_audit() {
+    print_header "Security Audit"
+    echo "Running security checks..."
+    
+    local issues=0
+    local install_path="$DEFAULT_PROJECT_PATH"  # Default guess, checking actual later
+
+    # Check 1: Root user
+    if [[ $EUID -eq 0 ]]; then
+        print_error "Do NOT run this installer as root/sudo"
+        ((issues++))
+    else
+        print_success "Running as standard user"
+    fi
+
+    # Check 2: Safe Paths
+    # We can't check variable yet as it prompts later, but we check environment
+    
+    if [[ "$install_path" == "/" || "$install_path" == "$HOME" ]]; then
+         print_warning "Default path looks unsafe: $install_path"
+    fi
+
+    echo ""
+    return $issues
+}
+
 # === PREFLIGHT CHECKS ===
 check_prerequisites() {
     local errors=0
@@ -179,23 +228,26 @@ create_project_structure() {
     echo ""
 
     # Create directories
-    mkdir -p "$project_path"/{journal,tasks/{pending,completed,archive},context,logs}
+    mkdir -p "$project_path"/{journal,tasks/{pending,completed,archive},context,logs,scripts}
 
-    # Copy wakeup.sh to project
+    # Copy wakeup.sh safely
     if [[ -f "$script_dir/wakeup.sh" ]]; then
-        cp "$script_dir/wakeup.sh" "$project_path/wakeup.sh"
+        safe_copy "$script_dir/wakeup.sh" "$project_path/wakeup.sh" "wakeup.sh"
         chmod +x "$project_path/wakeup.sh"
-        print_success "Installed wakeup.sh"
     fi
 
-    # Copy protocol file if available
+    # Copy sam safely
+    if [[ -f "$script_dir/sam" ]]; then
+        safe_copy "$script_dir/sam" "$project_path/scripts/sam" "sam CLI"
+        chmod +x "$project_path/scripts/sam"
+    fi
+
+    # Copy protocol safely
     local protocols_dir="$(dirname "$script_dir")/protocols"
     if [[ -f "$protocols_dir/autonomous-wakeup.md" ]]; then
-        cp "$protocols_dir/autonomous-wakeup.md" "$project_path/autonomous-wakeup.md"
-        print_success "Installed autonomous-wakeup.md protocol"
+        safe_copy "$protocols_dir/autonomous-wakeup.md" "$project_path/autonomous-wakeup.md" "Protocol (Companion)"
     elif [[ -f "$protocols_dir/productivity-agent.md" ]]; then
-        cp "$protocols_dir/productivity-agent.md" "$project_path/autonomous-wakeup.md"
-        print_success "Installed productivity-agent.md protocol"
+        safe_copy "$protocols_dir/productivity-agent.md" "$project_path/autonomous-wakeup.md" "Protocol (Productivity)"
     fi
 
     # Create CLAUDE.md if it doesn't exist
@@ -285,6 +337,15 @@ SETTINGS_EOF
 # === MAIN ===
 main() {
     print_header
+
+    # Run Security Audit
+    perform_security_audit
+    if [[ $? -gt 0 ]]; then
+        read -p "Security audit found issues. Continue? [y/N]: " sec_confirm
+        if [[ ! "${sec_confirm:-N}" =~ ^[Yy] ]]; then
+            exit 1
+        fi
+    fi
 
     # Check prerequisites
     if ! check_prerequisites; then

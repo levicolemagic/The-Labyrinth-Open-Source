@@ -5,7 +5,11 @@
 #   sam status            - Check scheduled task status
 #   sam log               - View today's log
 #   sam task "do work"    - Add a task to the queue
+#   sam task "do work"    - Add a task to the queue
 #   sam list              - List pending tasks
+#   sam allow <path>      - Allow access to a path
+#   sam deny <path>       - Deny access to a path
+#   sam permissions       - List permissions
 
 param (
     [Parameter(Position=0)]
@@ -63,6 +67,60 @@ switch ($Command) {
             $Content = Get-Content $_.FullName | ConvertFrom-Json
             Write-Host "[$($Content.priority)] $($Content.instructions)"
         }
+        }
+    }
+
+    "allow" {
+        $SettingsFile = Join-Path $ProjectPath ".claude\settings.local.json"
+        if (-not $Arg1) { Write-Error "Please provide a path."; return }
+
+        $Json = if (Test-Path $SettingsFile) { Get-Content $SettingsFile -Raw | ConvertFrom-Json } else { @{ permissions = @{ allow = @(); deny = @() } } }
+        
+        # Ensure structure exists
+        if (-not $Json.permissions) { $Json | Add-Member -MemberType NoteProperty -Name "permissions" -Value @{ allow = @(); deny = @() } }
+        if (-not $Json.permissions.allow) { $Json.permissions | Add-Member -MemberType NoteProperty -Name "allow" -Value @() }
+        
+        if ($Json.permissions.allow -notcontains $Arg1) {
+            $Json.permissions.allow += $Arg1
+            $Json | ConvertTo-Json -Depth 10 | Set-Content $SettingsFile
+            Write-Host "Allowed: $Arg1"
+        } else {
+            Write-Host "Path already allowed."
+        }
+    }
+
+    "deny" {
+        $SettingsFile = Join-Path $ProjectPath ".claude\settings.local.json"
+        if (-not $Arg1) { Write-Error "Please provide a path."; return }
+
+        $Json = if (Test-Path $SettingsFile) { Get-Content $SettingsFile -Raw | ConvertFrom-Json } else { @{ permissions = @{ allow = @(); deny = @() } } }
+        
+        # Ensure structure exists
+        if (-not $Json.permissions) { $Json | Add-Member -MemberType NoteProperty -Name "permissions" -Value @{ allow = @(); deny = @() } }
+        if (-not $Json.permissions.deny) { $Json.permissions | Add-Member -MemberType NoteProperty -Name "deny" -Value @() }
+        
+        if ($Json.permissions.deny -notcontains $Arg1) {
+            $Json.permissions.deny += $Arg1
+            $Json | ConvertTo-Json -Depth 10 | Set-Content $SettingsFile
+            Write-Host "Denied: $Arg1"
+        } else {
+            Write-Host "Path already denied."
+        }
+    }
+
+    "permissions" {
+        $SettingsFile = Join-Path $ProjectPath ".claude\settings.local.json"
+        if (Test-Path $SettingsFile) {
+            $Json = Get-Content $SettingsFile -Raw | ConvertFrom-Json
+            Write-Host "=== Permissions ===" -ForegroundColor Cyan
+            Write-Host "Allowed:" -ForegroundColor Green
+            if ($Json.permissions.allow) { $Json.permissions.allow | ForEach-Object { Write-Host "  - $_" } }
+            Write-Host ""
+            Write-Host "Denied:" -ForegroundColor Red
+            if ($Json.permissions.deny) { $Json.permissions.deny | ForEach-Object { Write-Host "  - $_" } }
+        } else {
+            Write-Host "No permissions file found."
+        }
     }
 
     "help" {
@@ -72,5 +130,8 @@ switch ($Command) {
         Write-Host "  log               Tail today's log"
         Write-Host "  task `"msg`"        Create a new task"
         Write-Host "  list              List pending tasks"
+        Write-Host "  allow <path>      Allow access"
+        Write-Host "  deny <path>       Deny access"
+        Write-Host "  permissions       List permissions"
     }
 }

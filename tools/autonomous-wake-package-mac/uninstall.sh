@@ -121,6 +121,22 @@ main() {
             cp -r "$DEFAULT_PROJECT_PATH" "$backup_path"
             print_success "Created backup at: $backup_path"
 
+            # Safety checks for removal
+            if [[ -z "$DEFAULT_PROJECT_PATH" || "$DEFAULT_PROJECT_PATH" == "/" || "$DEFAULT_PROJECT_PATH" == "$HOME" ]]; then
+                print_error "Dangerous path detected: $DEFAULT_PROJECT_PATH"
+                echo "Aborting removal to protect your system."
+                exit 1
+            fi
+
+            if [[ "$DEFAULT_PROJECT_PATH" != *"/AI-Companion"* ]]; then
+                print_warning "Path does not look like an AI Companion folder: $DEFAULT_PROJECT_PATH"
+                read -p "Are you sure you want to delete it? [y/N]: " strict_confirm
+                if [[ ! "${strict_confirm:-N}" =~ ^[Yy] ]]; then
+                   echo "Aborted."
+                   exit 1
+                fi
+            fi
+
             rm -rf "$DEFAULT_PROJECT_PATH"
             print_success "Removed: $DEFAULT_PROJECT_PATH"
         fi
