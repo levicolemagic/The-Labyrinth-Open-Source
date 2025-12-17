@@ -178,6 +178,25 @@ The productivity protocol is designed to work with N8N-generated tasks. See `exa
 }
 ```
 
+## Advanced Features
+
+### 📅 Calendar Integration (Mac Only)
+SAM automatically checks your macOS Calendar (which can sync with Notion/Google) before waking up.
+-   **Why:** To respect your time and journal about your day.
+-   **How:** A local JXA script (`tools/get-calendar.js`) fetches today's events.
+-   **Setup:** The first time it runs, macOS will ask for permission. Click "Allow" once.
+
+### 🛠️ Tool Fabrication (Human-in-the-Loop)
+SAM can request to write new scripts to expand its capabilities. This is a **Zero-Trust** system: SAM cannot run new code without your explicit approval.
+
+**The Workflow:**
+1.  **Request:** SAM analyzes a problem (e.g., "I need to check BTC prices") and writes a request file.
+2.  **Notification:** You see "New Tool Request" in the logs.
+3.  **Review:** You run `sam tool list` to see the proposal (Code plan, Access needed).
+4.  **Decision:**
+    -   `sam tool approve <name>`: SAM builds the tool on the next wake-up.
+    -   `sam tool deny <name>`: The request is rejected and archived.
+
 ## Sam CLI
 
 The `sam` command lets you quickly create tasks from your terminal:
