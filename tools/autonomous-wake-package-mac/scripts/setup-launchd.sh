@@ -231,7 +231,14 @@ create_project_structure() {
     echo ""
 
     # Create directories
-    mkdir -p "$project_path"/{journal,tasks/{pending,completed,archive},context,logs,scripts,requests/{pending,approved,denied,archive}}
+    mkdir -p "$project_path"/{journal,tasks/{pending,completed,archive},context,config,logs,scripts,requests/{pending,approved,denied,archive}}
+
+    # Copy calendar config
+    if [[ -f "$(dirname "$script_dir")/../config/calendar.json" ]]; then
+        safe_copy "$(dirname "$script_dir")/../config/calendar.json" "$project_path/config/calendar.json" "Calendar Config"
+    elif [[ -f "$script_dir/../../config/calendar.json" ]]; then
+        safe_copy "$script_dir/../../config/calendar.json" "$project_path/config/calendar.json" "Calendar Config"
+    fi
 
     # Copy wakeup.sh safely
     if [[ -f "$script_dir/wakeup.sh" ]]; then
@@ -246,10 +253,10 @@ create_project_structure() {
     fi
 
     # Copy calendar reader safely
-    if [[ -f "$(dirname "$script_dir")/../tools/get-calendar.js" ]]; then
-        safe_copy "$(dirname "$script_dir")/../tools/get-calendar.js" "$project_path/scripts/get-calendar.js" "Calendar Reader"
-    elif [[ -f "$script_dir/../../tools/get-calendar.js" ]]; then
-        safe_copy "$script_dir/../../tools/get-calendar.js" "$project_path/scripts/get-calendar.js" "Calendar Reader"
+    if [[ -f "$(dirname "$script_dir")/../tools/get-calendar.applescript" ]]; then
+        safe_copy "$(dirname "$script_dir")/../tools/get-calendar.applescript" "$project_path/scripts/get-calendar.applescript" "Calendar Reader"
+    elif [[ -f "$script_dir/../../tools/get-calendar.applescript" ]]; then
+        safe_copy "$script_dir/../../tools/get-calendar.applescript" "$project_path/scripts/get-calendar.applescript" "Calendar Reader"
     fi
 
     # Copy protocol safely

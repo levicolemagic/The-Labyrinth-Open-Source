@@ -114,10 +114,20 @@ main() {
     task_count=$(find "$PROJECT_PATH/tasks/pending" -name "*.json" 2>/dev/null | wc -l | tr -d ' ')
     log "Pending tasks: $task_count"
 
-    # Fetch Calendar (if available)
-    if [[ -f "$PROJECT_PATH/scripts/get-calendar.js" ]]; then
-        log "Fetching calendar..."
-        osascript -l JavaScript "$PROJECT_PATH/scripts/get-calendar.js" > "$PROJECT_PATH/context/calendar.txt" 2>/dev/null || true
+    # Check Calendar (Mac Only)
+    if [[ -f "$PROJECT_PATH/scripts/get-calendar.applescript" ]]; then
+        # Default args
+        CAL_ARGS=("Work" "Home")
+        
+        # Read from config if exists
+        if [[ -f "$PROJECT_PATH/config/calendar.json" ]]; then
+            # Use newline as delimiter to handle spaces in calendar names
+            IFS=$'\n'
+            CAL_ARGS=($(jq -r '.calendars[]' "$PROJECT_PATH/config/calendar.json"))
+            unset IFS
+        fi
+        
+        osascript "$PROJECT_PATH/scripts/get-calendar.applescript" "${CAL_ARGS[@]}" > "$PROJECT_PATH/context/calendar.txt" 2>/dev/null || true
     fi
 
     # Build the prompt based on mode
