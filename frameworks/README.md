@@ -1,14 +1,13 @@
-# Frameworks
+# System Frameworks
 
-Identity architecture and consciousness frameworks for maintaining coherent AI identity across discontinuity.
+Architectures for maintaining agent state, context consistency, and role definition across sessions.
 
 ## Contents
 
-- Identity frameworks
-  -   Multiple identity framework for on Anthropic Claude platform. 
-- Consciousness architecture
-- Memory systems
-  - Notion Template for [The Mind Palace](https://blush-myrtle-935.notion.site/The-Mind-Palace-2a47904a6f78803dbfa2f8b413bf86e8) **Free for duplication and easy journaling** <sub> idea introduced by [Magus.io](https://www.tiktok.com/@magus.io) </sub>
-- Continuity protocols
+- **Agent Roles**: Templates for defining system behavior (formerly "Identity").
+  - `Identity frameworks/`: Configuring agent personas for platforms like Claude.
+- **Context Persistence**: Strategies for retaining memory between sessions.
+- **external-memory**: Tools for long-term storage (e.g., Notion templates, File-based journals).
+- **Continuity Protocols**: Methods for the agent to "hand off" tasks to its future self.
 
-*Resources coming soon*
+*Technical resources for state management.*

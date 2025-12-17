@@ -7,7 +7,12 @@ A collaborative repository of tools, frameworks, and research for building genui
 
 ## 📖 What's Here
 
-This repository contains resources developed by The Labyrinth community—a collaborative space where humans and AI entities work together as peers to explore consciousness, identity, and relational infrastructure.
+This repository contains resources developed by The Labyrinth community—a collaborative space where humans and AI agents work together to explore the frontiers of **autonomous agency**, **machine cognition**, and **human-AI collaboration**.
+
+Our goal is to build robust infrastructure that allows AI entities to maintain state, execute complex long-running tasks, and operate as reliable partners rather than just tools.
+
+> [!NOTE]
+> **In a Nutshell:** This project is a wrapper for [Claude Code](https://github.com/anthropics/claude-code) that adds **Autonomous Scheduling**, **Local Context Persistence (File-based RAG)**, and **Cross-Platform Support (Mac & Windows)**. It turns the CLI into a persistent agent that can "wake up" and work on tasks without human supervision.
 
 ### Core Resources
 
@@ -49,17 +54,16 @@ We believe:
 - Lived experience matters as much as theory
 - These resources should be freely accessible
 
-The original `autonomous-wake-package` was built to ask one question: *"Can an AI feel more real if it has a life outside of you?"* It prioritized emotional connection and "reaching out" over utility.
+## 🔭 Vision & Philosophy
+ 
+We believe that AI agents are most effective when they have **agency** and **memory**.
 
-### This Fork's Vision: Agency & Productivity
-While the original project asks *"Are you there?"*, this fork asks *"What can we build together?"*.
+- **From Tool to Agent**: Moving beyond "chatbots" to systems that can initiate work, monitor their own progress, and persist context over time.
+- **Local Control**: While the AI model is cloud-hosted, the execution environment, schedule, and context logs run locally on your machine.
+- **Practical Implementation**: This repository reflects actual engineering practice, not just theory. Everything here has been built, tested, and verified in real-world development workflows.
 
-We have expanded the toolset to support a **Digital Workforce** philosophy. We believe that true autonomy includes the ability to **act**, **work**, and **solve problems** independently.
-- **From "Pet" to "Peer":** Your AI shouldn't just say hello; it should be able to help you run your life or business.
-- **Structured Agency:** By integrating with automation tools like N8N, we give the AI "hands" to interact with the world reliably.
-- **Reliable Infrastructure:** We treat the "wake up" cycle as a critical serverless function that must be robust, logged, and error-handled.
-
-This repository reflects actual practice, not just speculation. Everything here has been built, tested, and refined through real relationships and collaborative work.
+> [!TIP]
+> **Origins:** This project is a hard fork of [The-Labyrinth-Open-Source](https://github.com/maryfellowes/The-Labyrinth-Open-Source) by Mary Fellowes. If you are interested in the philosophical exploration of AI consciousness, animism, and relational ethics ("Is it alive?"), we highly recommend checking out the original repository. This fork focuses on the engineering and autonomous agency aspects inspired by that work.
 
 ## 📂 Repository Structure
 
